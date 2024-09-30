@@ -1,0 +1,116 @@
+def identify_bacteria():
+    """
+    This function identifies bacteria based on a series of user inputs about the bacteria's characteristics.
+    It uses a decision tree approach to narrow down the possible bacterial species.
+    """
+    print("Bacterial Identification for Common Infections")
+    
+    # Start with Gram stain test
+    gram_stain = input("Is the bacteria gram-negative or gram-positive? (positive/negative): ").lower()
+    
+    if gram_stain == "positive":
+        # Branch for Gram-positive bacteria
+        nocardia_actinomyces = input("Does the bacteria have branching filaments similar to fungi? (yes/no): ").lower()
+        if nocardia_actinomyces == "yes":
+            return "Bacteria is likely Nocardia or aerobic actinomycetes species and should be confirmed by performing a broth microdilution assay."
+        else:
+            # Further identification based on shape
+            shape = input("What is the shape of the bacteria? (coccus/bacillus): ").lower()
+            if shape == "coccus":
+                # Identification of Gram-positive cocci
+                catalase_test = input("Is the bacteria catalase-positive or catalase-negative? (positive/negative): ").lower()
+                if catalase_test == "positive":
+                    # Staphylococcus identification
+                    coagulase_test = input("Is the bacteria coagulase-positive or coagulase-negative? (positive/negative): ").lower()
+                    if coagulase_test == "positive":
+                        return "Bacteria is likely Staphylococcus aureus."
+                    elif coagulase_test == "negative":
+                        return "Bacteria is either Staphylococcus epidermidis or Staphylococcus saprophyticus. To confirm one or the other, utilize a novobiocin test."
+                elif catalase_test == "negative":
+                    # Streptococcus identification
+                    hemolysis_test = input("What is the result of a hemolysis test for the bacteria? (complete/partial/no change): ").lower()
+                    if hemolysis_test == "complete":
+                        return "Bacteria is likely either Streptococcus pyogenes or Streptococcus agalactiae. To confirm one or the other, complete bacitracin sensitivity testing."
+                    elif hemolysis_test == "partial":
+                        return "Bacteria is likely either Viridans streptococci or Streptococcus pneumoniae. To confirm the species, complete optochin resistance testing. Viridans streptococci is resistant to optochin and Streptococcus pneumoniae is sensitive."
+                    elif hemolysis_test == "no change":
+                        return "Bacteria is likely Streptococcus bovis or Enterococcus faecalis. Long chains indicate Streptococcus bovis while Enterococcus faecalis appears as pairs."
+            elif shape == "bacillus":
+                # Identification of Gram-positive bacilli
+                anaerobic = input("Is the bacteria anaerobic or aerobic? (anaerobic/aerobic): ").lower()
+                if anaerobic == "anaerobic":
+                    spores = input("Is the bacteria spore forming? (yes/no): ").lower()
+                    if spores == "yes":
+                        return "Bacteria is likely a Clostridium species."
+                    elif spores == "no":
+                        return "Bacteria is likely a species of Listeria."
+                elif anaerobic == "aerobic":
+                    motile = input("Is the bacteria motile? (yes/no): ").lower()
+                    if motile == "yes":
+                        return "Bacteria is likely Bacillus cereus"
+                    elif motile == "no":
+                        return "Bacteria is likely Bacillus anthracis"
+    elif gram_stain == "negative":
+        # Branch for Gram-negative bacteria
+        shape = input("What is the shape of the bacteria? (diploccoci/rods/comma/coccoid rods): ").lower()
+        if shape == "diplococci":
+            # Identification of Gram-negative diplococci
+            maltose = input("Does the bacteria ferment maltose? (yes/no): ").lower()
+            if maltose == "yes":
+                return "Bacteria is likely Neisseria meningitidis"
+            elif maltose == "no":
+                return "Bacteria is likely Neisseria gonorrhoeae"
+        elif shape == "rods":
+            # Identification of Gram-negative rods
+            lactose = input("Does the bacteria fermentate lactose? (yes/no): ").lower()
+            if lactose == "yes":
+                # Lactose-fermenting Gram-negative rods
+                fermentation_rate = input("What is the rate of fermentation for the bacteria? (fast/slow): ").lower()
+                if fermentation_rate == "fast":
+                    return "Bacteria is likely a strain of Escherichia coli or Klebsiella"
+                elif fermentation_rate == "slow":
+                    flagella = input("Does the bacteria have an evident flagella? (yes/no): ").lower()
+                    if flagella == "yes":
+                        return "Bacteria is likely a strain of Serratia"
+                    elif flagella == "no":
+                        return "Bacteria is likely a strain of Citrobacter"
+            elif lactose == "no":
+                # Non-lactose-fermenting Gram-negative rods
+                oxidase_test = input("Is the bacteria oxidase positive or negative? (positive/negative): ").lower()
+                if oxidase_test == "positive":
+                    return "Bacteria is likely Pseudomonas aeruginosa"
+                elif oxidase_test == "negative":
+                    hydrogen_sulfide = input("Does the bacteria produce hydrogen sulfide? (yes/no): ").lower()
+                    if hydrogen_sulfide == "yes":
+                        flagella = input("Does the bacteria have an evident flagella? (yes/no): ").lower()
+                        if flagella == "yes":
+                            return "Bacteria is likely a strain of Salmonella"
+                        elif flagella == "no":
+                            return "Bacteria is likely Yersinia enterocolitica"
+                    elif hydrogen_sulfide == "no":
+                        return "Bacteria is likely a strain of Shigella"
+        elif shape == "coccoid rods":
+            # Identification of Gram-negative coccoid rods
+            chains = input("Does the bacteria form short chains? (yes/no): ").lower()
+            if chains == "yes":
+                return "Bacteria is likely a strain of Pasteurella"
+            elif chains == "no":
+                return "Bacteria is likely Haemophilus influenzae, Bordetella pertussis, or a strain of Brucella."
+        elif shape == "comma":
+            # Identification of comma-shaped Gram-negative bacteria
+            s_shape = input("Is the bacteria an S shaped spiral? (yes/no): ").lower()
+            if s_shape == "yes":
+                flagellum = input("Does the bacteria have 1 or 2 flagella/flagellum? (one/two): ").lower()
+                if flagellum == "one":
+                    return "Bacteria is likely Helicobacter pylori"
+                elif flagellum == "two":
+                    return "Bacteria is likely Campylobacter jejuni"
+            elif s_shape == "no":
+                return "Bacteria is likely Vibrio cholerae"
+        
+    # If no identification could be made
+    return "Unable to identify the bacteria with the given information."
+
+# Run the program
+result = identify_bacteria()
+print(result)    
