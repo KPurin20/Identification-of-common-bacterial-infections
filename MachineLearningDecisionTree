@@ -1,0 +1,80 @@
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
+
+def def_bacterial_dataset():
+    # create sample dataset for previous bacterial identification of frequent infection causing bacteria
+    # Order: [gram_stain, shape, catalase, coagulase, hemolysis, anaerobic, spores, motile, lactose, oxidase]
+    X = np.array([
+        [1,0,1,1,0,0,0,0,0,0], # S. aureus
+        [1,0,1,0,0,0,0,0,0,0], # S. epidermidis
+        [1,0,0,0,2,0,0,0,0,0], # S. pneumoniae
+        [1,1,0,0,0,1,1,0,0,0], # Clostridium
+        [1,1,0,0,0,0,0,1,0,0], # B. Cereus
+        [0,2,0,0,0,0,0,0,1,0], # E. coli
+        [0,1,0,0,0,0,0,0,0,1], # P. aeruginosa
+        [0,1,0,0,0,0,0,1,0,0], # Salmonella species
+        [0,3,0,0,0,0,0,1,0,0], # H. pylori
+        [0,3,0,0,0,0,0,0,0,0], # V. cholerae
+    ])
+
+    y = np.array([
+        "Staphylococcus aureus", "Staphylococcus epidermidis", "Streptococcus pneumoniae", "Clostridium", "Bacillus cereus", "Escherichia coli", "Pseudomonas aeruginosa", "Salmonella", "Helobacter pylori", "Vibrio cholerae"
+    ])
+
+    return X, y
+
+def model_training():
+    #training decision tree classifier on this set of bacterial data
+
+    X, y = def_bacterial_dataset()
+    model = DecisionTreeClassifier(random_state=42)
+    model.fit(X, y)
+
+    # LabelEncoder for the selected features
+    le = LabelEncoder()
+    le.fit(["positive", "negative", "coccus", "bacillus", "diplococci", "rods", "comma", "complete", "partial", "no change", "yes", "no", "fast", "slow"])
+
+    return model, le
+
+def get_input(le):
+    #collecting user characteristics input
+
+    features = np.zeros(10, dtype=int)
+    
+    features[0] = le.transform([input("Is the bacteria gram-positive or gram-negative? (positive/negative): ").lower()])[0]
+    features[1] = le.transform([input("What is the shape of the bacteria? (coccus/bacillus/diplococci/rods/comma): ").lower()])[0]
+    
+    if features[0] == le.transform(["positive"])[0]:  # Gram-positive
+        features[2] = le.transform([input("Is the bacteria catalase-positive or catalase-negative? (positive/negative): ").lower()])[0]
+        if features[2] == le.transform(["positive"])[0]:
+            features[3] = le.transform([input("Is the bacteria coagulase-positive or coagulase-negative? (positive/negative): ").lower()])[0]
+        else:
+            features[4] = le.transform([input("What is the result of a hemolysis test? (complete/partial/no change): ").lower()])[0]
+        
+        if features[1] == le.transform(["bacillus"])[0]:
+            features[5] = le.transform([input("Is the bacteria anaerobic? (yes/no for anaerobic): ").lower()])[0]
+            if features[5] == le.transform(["yes"])[0]:
+                features[6] = le.transform([input("Is the bacteria spore forming? (yes/no): ").lower()])[0]
+            else:
+                features[7] = le.transform([input("Is the bacteria motile? (yes/no): ").lower()])[0]
+    
+    else:  # Gram-negative
+        features[8] = le.transform([input("Does the bacteria ferment lactose? (yes/no): ").lower()])[0]
+        features[9] = le.transform([input("Is the bacteria oxidase positive or negative? (positive/negative): ").lower()])[0]
+    
+    return features.reshape(1, -1)
+
+def identification_of_bacteria():
+    #use ml decision tree to identify bacteria
+
+    print("Bacterial Identifcation for Common Infections")
+
+    model, le = model_training()
+    user_input = get_input(le)
+
+    prediction = model.predict(user_input)
+    return f"Based on the provided characteristics, the bacteria is likely to be: {prediction[0]}"
+
+# run program
+result = identification_of_bacteria()
